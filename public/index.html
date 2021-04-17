@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Cons..</title>
+	<meta charset="UTF-8">
+	<script src="jquery.js"></script>
+    <style>
+        .menu {
+            text-decoration: underline;
+            color:cornflowerblue;
+            cursor: pointer;
+        }
+        .subm {
+            padding-left:20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body style='margin:0px auto;padding:0px'>
+<div style='font-weight:bold;background-color:#531263;height:100px;'>
+	<div style='color:#fff;margin-left:188px;padding-left:1em;border-left:1px solid #ccc'>
+	    <div style='font-size:2em;color:#fff'>
+            Just a test
+        </div>
+	</div>
+
+</div>
+<div>
+    <span id="" style="float:left;width:300px;text-align: left;padding-left:20px;">
+        <div id="setup">
+            <a href="https://auth.truelayer-sandbox.com/?response_type=code&client_id=sandbox-cons-f315b7&scope=info%20accounts%20balance%20cards%20transactions%20direct_debits%20standing_orders%20offline_access&redirect_uri=http://localhost:8080/api/callback&providers=uk-ob-all%20uk-oauth-all%20uk-cs-mock">Mock Authorize</a>        
+        </div>
+        <div id="details">
+            <div id="theAccounts" class="menu">
+                Account Card(s)
+            </div>
+            <select id='cards' name='cards'></select>
+        </div>
+    </span>
+    <div style="float:left" id="transactions"></div>
+</div>
+<script>
+    $(function() {
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('access_token');
+
+        if (token) {
+            $("#setup").hide()
+            $("#details").show()
+        } else {
+            $("#setup").show()
+            $("#details").hide()
+        }
+
+        $("#cards").change( function(e) {
+
+            $.getJSON("/api/cards/transactions/"+token+"/"+$(this).val(), function(data){
+                $('#transactions').empty()
+                $.each( data.results, function( key, val ) {
+                    console.log(val)
+ 
+				    $('#transactions').append("<div style='border:1px solid;padding:2px;margin:1px'>"+
+                        "Description:"+val['description']+'<br/>'+
+                        "Transaction Type:"+val['transaction_type']+'<br/>'+
+                        "Amount:"+val['amount']+'<br/>'+
+                        '.... </div>');
+                });
+            })
+        })
+
+
+        $("#theAccounts").click( 
+            
+            $.getJSON("/api/cards/"+token, function(data){
+                $('#cards').empty()
+                $('#cards').append($('<option>', { 
+				        value: '',
+				        text : '--Choose--',
+				        selected: true 
+				    }));
+                $.each( data.results, function( key, val ) {
+                    console.log(val)
+                    console.log(key,val['account_id']);
+				    $('#cards').append($('<option>', { 
+				        value: val['account_id'],
+				        text : val['display_name'] 
+				    }));
+                });
+            })
+
+        )
+    })
+</script>
+</body>
+</html>
