@@ -20,7 +20,7 @@ router.get("/callback", async(req,res)=>{
           'grant_type': 'authorization_code',
           'client_id': client_id,
           'client_secret': client_secret,
-          'redirect_uri': 'http://localhost:8080/api/callback',
+          'redirect_uri': 'http://13.228.29.251:8080/api/callback',
           'code': req.query.code
         }
 
@@ -29,7 +29,7 @@ router.get("/callback", async(req,res)=>{
     
     if (error) throw new Error(error);
     let token = JSON.parse(response.body)
-
+    console.log(token)
 
     return res.redirect("/?access_token="+token.access_token)
     });
