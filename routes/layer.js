@@ -29,6 +29,7 @@ router.get("/callback", async(req,res)=>{
     
     if (error) throw new Error(error);
     let token = JSON.parse(response.body)
+    
     console.log(token)
 
     return res.redirect("/?access_token="+token.access_token)
