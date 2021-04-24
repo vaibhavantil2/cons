@@ -28,5 +28,5 @@ const config = {
 
 };
 
-config.app = config.sandbox
+config.app = config.live
 module.exports = config;
