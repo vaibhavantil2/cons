@@ -24,18 +24,19 @@
 	    <div style='font-size:2em;color:#fff'>
             Just a test
         </div>
+        <div id="notice"></div>
 	</div>
 
 </div>
 <div>
     <span id="" style="float:left;width:300px;text-align: left;padding-left:20px;">
+        
         <div id="setup">
-            <a id="authlink" href="xxx">Mock Authorize</a>        
+            <a id="authlink" href="xxx" >Mock Authorize</a>        
         </div>
-        <div id="details">
-            <div id="theAccounts" class="menu">
-                Account Card(s)
-            </div>
+ 
+        <div id="details" style="border:1px solid;">
+            <a href="javascript:void(0)" id="theAccounts">Account Card(s)</a><br/>
             <select id='cards' name='cards'></select>
         </div>
     </span>
@@ -43,16 +44,16 @@
 </div>
 <script>
     $(function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('access_token');
 
         // layers must be introduced here (such as user login etc) to invoke specific user depending on 
         // requirement or system design 
+
+
         $.getJSON("/api/authorize", function(data){
             $("#authlink").attr('href',data.url)
-            //$("#authlink").text(data.url)
         })
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('access_token');
 
         if (token) {
             $("#setup").hide()
@@ -80,8 +81,8 @@
 
 
         $("#theAccounts").click( 
-            
-            $.getJSON("/api/cards/"+token, function(data){
+           
+            $.getJSON("/cards/"+token, function(data){
                 $('#cards').empty()
                 $('#cards').append($('<option>', { 
 				        value: '',
