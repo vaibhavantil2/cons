@@ -71,13 +71,19 @@
             $.getJSON(apiurl+"/api/cards/transactions/"+token+"/"+$(this).val(), function(data){
                 $('#transactions').empty()
                 $.each( data.results, function( key, val ) {
-                    console.log(val)
- 
-				    $('#transactions').append("<div style='border:1px solid;padding:2px;margin:1px'>"+
+                    //console.log(val)
+                    try {
+                        $('#transactions').append("<div style='border:1px solid;padding:2px;margin:1px'>"+
                         "Description:"+val['description']+'<br/>'+
                         "Transaction Type:"+val['transaction_type']+'<br/>'+
+                        "Transaction classification:"+val['transaction_classification']+'<br/>'+
+                        "Date:"+val['timestamp']+'<br/>'+
                         "Amount:"+val['amount']+'<br/>'+
                         '.... </div>');
+                    } catch(e) {
+                        // do something with unreadable entry here
+                    }
+
                 });
             })
         })
@@ -95,10 +101,15 @@
                 $.each( data.results, function( key, val ) {
                     console.log(val)
                     console.log(key,val['account_id']);
-				    $('#cards').append($('<option>', { 
+                    try {
+                        $('#cards').append($('<option>', { 
 				        value: val['account_id'],
 				        text : val['display_name'] 
-				    }));
+				        }));
+                    } catch (e) {
+                        // do something with unreadable entry here
+                    }
+
                 });
             })
 
