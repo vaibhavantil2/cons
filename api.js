@@ -16,5 +16,5 @@ app.use((req, res, next) => {
 app
     .use("/", mocklayer) // truelayer does not seem to callback outside of root
     .use("/api", mocklayer)
-    .listen(config.sys.port, () => {console.log("[Serving webpage]")})
+    .listen(config.sys.port, () => {console.log("[Serving API]")})
 	
