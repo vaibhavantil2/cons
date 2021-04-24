@@ -88,13 +88,13 @@ router.get("/cards/transactions/:token/:id", async (req,res)=>{
     // // return res.redirect("/generrorpage.html");
   }
 
-  console.log('[Application]  query card transaction(s)',response)
+  console.log('[Application]  query card transaction(s)',res)
 
   var request = require('request');
 
     var options = {
     'method': 'GET',
-    'url': config.app.authURL+'data/v1/cards/'+req.params.id+'/transactions',
+    'url': config.app.apiURL+'data/v1/cards/'+req.params.id+'/transactions',
     'headers': {
         'Authorization': 'Bearer '+req.params.token
     }
@@ -133,7 +133,7 @@ router.get("/cards/:token", async (req,res)=>{
     var request = require('request');
     var options = {
       'method': 'GET',
-      'url': config.app.authURL+'data/v1/cards',
+      'url': config.app.apiURL+'data/v1/cards',
       'headers': {
         'Authorization': 'Bearer '+req.params.token
       }
@@ -152,7 +152,7 @@ router.get("/cards/:token", async (req,res)=>{
         let e = JSON.parse(response.body)
 
         console.log('[Application]  ... received')
-        console.log(e.results)
+        console.log(e)
         return res.status(200).send({'status':1,'results':e.results})
 
       } catch(e) {
