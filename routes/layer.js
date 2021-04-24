@@ -9,49 +9,80 @@ const async =  require('async');
 const client_id = "sandbox-cons-f315b7"
 const client_secret = "c9ca698e-ab6f-47c3-b38b-dc32e8e103c2"
 
+const config = require('../config.js');
+
+
+router.get("/authorize", async(req,res)=>{
+  console.log('d')  
+  base = (config.app.authURI
+      .replace('{client_id}',config.app.client_id))
+      .replace('{redirect_uri}',config.app.redirect)
+
+      // authentication link
+  return res.status(200).send({'status':1,'url':config.app.authURL+base})
+});
+
 router.get("/callback", async(req,res)=>{
-    
+    console.log('[Application]  Sending authentication request')
     var options = {
         'method': 'POST',
-        'url': 'https://auth.truelayer-sandbox.com/connect/token',
+        'url': config.app.authURL+'connect/token',
         'headers': {
         },
         form: {
           'grant_type': 'authorization_code',
-          'client_id': client_id,
-          'client_secret': client_secret,
-          'redirect_uri': 'http://13.228.29.251:8080/api/callback',
+          'client_id': config.app.client_id,
+          'client_secret': config.app.client_secret,
+          'redirect_uri': config.app.redirect,
           'code': req.query.code
         }
-
       };
+
     request(options, function (error, response) {
+
+      console.log('[Application]  authentication response',response)
+
+      if (error) {
+        console.log('Error]',error)
+        return res.redirect("/generrorpage.html")
+      }
+
+      let token = JSON.parse(response.body)
+
+      console.log('[Application]  token received')
+      return res.redirect("/?access_token="+token.access_token)
     
-    if (error) throw new Error(error);
-    let token = JSON.parse(response.body)
-
-    console.log("callback",token)
-
-    return res.redirect("/?access_token="+token.access_token)
     });
 
 });
+
 router.get("/cards/transactions/:token/:id", async (req,res)=>{ 
 
-    var request = require('request');
+  console.log('[Application]  query card transaction(s)',response)
+  var request = require('request');
     var options = {
     'method': 'GET',
-    'url': 'https://api.truelayer-sandbox.com/data/v1/cards/'+req.params.id+'/transactions',
+    'url': config.app.authURL+'data/v1/cards/'+req.params.id+'/transactions',
     'headers': {
         'Authorization': 'Bearer '+req.params.token
     }
     };
+
     request(options, function (error, response) {
-    if (error) throw new Error(error);
+        if (error) {
+          console.log('[Error]',error)
+          return res.redirect("/generrorpage.html")
+        }
       
-        let e = JSON.parse(response.body)
-        console.log(e.results)
-        return res.status(200).send({'status':1,'results':e.results})
+        try {
+          let e = JSON.parse(response.body)
+          console.log('[Application]  query card received')
+          console.log(e.results)
+          return res.status(200).send({'status':1,'results':e.results})  
+        } catch(e) {
+          console.log('[Issue]',e)
+          return res.status(200).send({'status':0,'results':e})
+        }
 
     });
 
@@ -59,21 +90,34 @@ router.get("/cards/transactions/:token/:id", async (req,res)=>{
 
 router.get("/cards/:token", async (req,res)=>{ 
 
+    console.log('[Application]  query card(s)')
     var request = require('request');
     var options = {
       'method': 'GET',
-      'url': 'https://api.truelayer-sandbox.com/data/v1/cards',
+      'url': config.app.authURL+'data/v1/cards',
       'headers': {
         'Authorization': 'Bearer '+req.params.token
       }
     };
 
     request(options, function (error, response) {
-      if (error) throw new Error(error);
       
-      let e = JSON.parse(response.body)
-      console.log(e.results)
-      return res.status(200).send({'status':1,'results':e.results})
+      if (error) {
+        console.log('[Error]',error)
+        return res.redirect("/generrorpage.html")
+      }
+    
+      try {
+        console.log('[Application]  ... received')
+        console.log(e.results)
+
+        return res.status(200).send({'status':1,'results':e.results})
+  
+      } catch(e) {
+
+        console.log('[Issue]',e)
+
+      }
 
     });
     
