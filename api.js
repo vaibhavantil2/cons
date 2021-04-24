@@ -14,6 +14,7 @@ app.use((req, res, next) => {
  * implementing this only for simplicity 
  */
 app
-    .use(express.static('public'))
-    .listen(8080, () => {console.log("[Serving webpage]")})
+    .use("/", mocklayer) // truelayer does not seem to callback outside of root
+    .use("/api", mocklayer)
+    .listen(config.sys.port, () => {console.log("[Serving webpage]")})
 	

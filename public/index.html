@@ -32,10 +32,10 @@
     <span id="" style="float:left;width:300px;text-align: left;padding-left:20px;">
         
         <div id="setup">
-            <a id="authlink" href="xxx" >Mock Authorize</a>        
+            <a id="authlink" href="" >Mock Authorize</a>        
         </div>
  
-        <div id="details" style="border:1px solid;">
+        <div id="details" >
             <a href="javascript:void(0)" id="theAccounts">Account Card(s)</a><br/>
             <select id='cards' name='cards'></select>
         </div>
@@ -43,6 +43,9 @@
     <div style="float:left" id="transactions"></div>
 </div>
 <script>
+    const apiurl =  "http://localhost:3000" // local
+    const apiurl =  "http://13.212.84.244:3000"
+
     $(function() {
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('access_token');
@@ -51,7 +54,7 @@
         // requirement or system design 
 
 
-        $.getJSON("/api/authorize", function(data){
+        $.getJSON(apiurl+"/api/authorize", function(data){
             $("#authlink").attr('href',data.url)
         })
 
@@ -65,7 +68,7 @@
 
         $("#cards").change( function(e) {
 
-            $.getJSON("/api/cards/transactions/"+token+"/"+$(this).val(), function(data){
+            $.getJSON(apiurl+"/api/cards/transactions/"+token+"/"+$(this).val(), function(data){
                 $('#transactions').empty()
                 $.each( data.results, function( key, val ) {
                     console.log(val)
@@ -82,7 +85,7 @@
 
         $("#theAccounts").click( 
            
-            $.getJSON("/cards/"+token, function(data){
+            $.getJSON(apiurl+"/cards/"+token, function(data){
                 $('#cards').empty()
                 $('#cards').append($('<option>', { 
 				        value: '',

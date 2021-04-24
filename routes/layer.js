@@ -16,7 +16,7 @@ const isValidToken = (token)=>{
   // preseting conditions here for valid token; also could be used as a routine to renew token if neccessary 
 
   if (token=='null' || !token) {
-    console.log('here',token)
+    //console.log('here',token)
     return false
     }
   
@@ -24,7 +24,7 @@ const isValidToken = (token)=>{
 }
 
 router.get("/authorize", async(req,res)=>{
- 
+  console.log(config.app)
   base = (config.app.authURI
       .replace('{client_id}',config.app.client_id))
       .replace('{redirect_uri}',config.app.redirect)
@@ -59,7 +59,7 @@ router.get("/callback", async(req,res)=>{
 
       if (error) {
         console.log('Error]',error,response.body)
-        return res.redirect("/generrorpage.html")
+        // // return res.redirect("/generrorpage.html")
       }
 
       let token = JSON.parse(response.body)
@@ -71,9 +71,9 @@ router.get("/callback", async(req,res)=>{
         // investigate: 
         // a few moments ago there was error on user but for some reason without changing anything 
         // issue is gone. 
-        return res.redirect('/generrorpage.html')
+        // return res.redirect('/generrorpage.html')
       } else {
-        return res.redirect("/?access_token="+token.access_token)
+        return res.redirect(config.app.httpd+"?access_token="+token.access_token)
       }
     
     });
@@ -85,7 +85,7 @@ router.get("/cards/transactions/:token/:id", async (req,res)=>{
   
   if ( !isValidToken(req.params.token)) {
     console.log('[Issue] Token invalid',req.params.token);
-    return res.redirect("/generrorpage.html");
+    // // return res.redirect("/generrorpage.html");
   }
 
   console.log('[Application]  query card transaction(s)',response)
@@ -103,7 +103,7 @@ router.get("/cards/transactions/:token/:id", async (req,res)=>{
     request(options, function (error, response) {
         if (error) {
           console.log('[Error]',error)
-          return res.redirect("/generrorpage.html")
+          // // return res.redirect("/generrorpage.html")
         }
       
         try {
@@ -125,7 +125,7 @@ router.get("/cards/:token", async (req,res)=>{
   
     if ( !isValidToken(req.params.token)) {
       console.log('[Issue] Token invalid',req.params.token);
-      return res.redirect("/generrorpage.html");
+      // // return res.redirect("/generrorpage.html");
     }
 
     console.log('[Application]  query card(s)')
@@ -145,7 +145,7 @@ router.get("/cards/:token", async (req,res)=>{
       
       if (error) {
         console.log('[Error]',error)
-        return res.redirect("/generrorpage.html")
+        // // return res.redirect("/generrorpage.html")
       }
     
       try {
